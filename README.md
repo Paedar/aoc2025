@@ -11,7 +11,7 @@ As such I try to incorporate new language features, even preview features as muc
 ## Language etc
 Language: Java  
 Version: 25 
-Preview Features enabled: No
+Preview Features enabled: Yes
 
 ## Input files
 Each implementation has a runnable main method that refers to the input file. The input files can be placed in
