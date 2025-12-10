@@ -1,6 +1,5 @@
 package dev.paedar.aoc.lvl03;
 
-import dev.paedar.aoc.lvl02.AoCLvl02;
 import dev.paedar.aoc.util.InputReader;
 
 import java.util.List;
@@ -10,43 +9,47 @@ import java.util.stream.Stream;
 
 public class AoCLvl03 {
 
-    private static final Logger LOGGER = Logger.getLogger(AoCLvl02.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(AoCLvl03.class.getName());
 
     public static void main(String[] args) {
         var banks = InputReader.readLines("03.input.txt");
 
-        var sumOfIdealJoltages = sumOfIdealJoltages(banks);
+        var sumOfIdealJoltages = sumOfIdealJoltages(banks, 2);
         LOGGER.log(Level.INFO, "Sum of ideal joltages: {0}", sumOfIdealJoltages);
+        var sumOfIdealHighJoltages = sumOfIdealJoltages(banks, 12);
+        LOGGER.log(Level.INFO, "Sum of ideal high joltages: {0}", sumOfIdealHighJoltages);
 
     }
 
-    public static long sumOfIdealJoltages(List<String> banks) {
+    public static long sumOfIdealJoltages(List<String> banks, int batteriesUsed) {
         return banks.stream()
-                    .mapToLong(AoCLvl03::determineJoltage)
+                    .mapToLong(bank -> determineJoltage(bank, batteriesUsed))
                     .sum();
     }
 
-    public static long determineJoltage(String bank) {
-        if(bank.length() < 2) {
-            throw new IllegalArgumentException("Bank must be at least 2 characters");
+    public static long determineJoltage(String bank, int batteriesUsed) {
+        if (bank.length() < batteriesUsed) {
+            throw new IllegalArgumentException("Bank must have at least as many batteries as used");
         }
         var digits = Stream.of(bank.split(""))
                            .map(Integer::parseInt)
                            .toList();
-        var firstDigit = digits.subList(0, digits.size() - 1)
+        var firstDigit = digits.subList(0, digits.size() - batteriesUsed + 1)
                                .stream()
                                .mapToInt(Integer::intValue)
                                .max()
-                               .getAsInt();
+                               .orElseThrow();
+
+        if (1 == batteriesUsed) {
+            return firstDigit;
+        }
+
         var firstDigitFirstPosition = digits.indexOf(firstDigit);
 
-        var secondDigit = digits.subList(firstDigitFirstPosition + 1, digits.size())
-                                .stream()
-                                .mapToInt(Integer::intValue)
-                                .max()
-                                .getAsInt();
+        var remainingBank = bank.substring(firstDigitFirstPosition + 1);
+        var remainder = determineJoltage(remainingBank, batteriesUsed - 1);
 
-        return 10 * firstDigit + secondDigit;
+        return Math.powExact(10L, batteriesUsed - 1) * firstDigit + remainder;
     }
 
 }
