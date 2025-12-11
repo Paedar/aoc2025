@@ -19,6 +19,8 @@ public class AoCLvl05 {
         var ingredients = readIngredients(lines);
         var freshIngredientCount = countFreshIngredients(ingredients, ranges);
         LOGGER.log(Level.INFO, "Fresh ingredient count: {0}", freshIngredientCount);
+        var possibleFreshIngredientCount = countFreshIngredients(ranges);
+        LOGGER.log(Level.INFO, "Possible fresh ingredient count: {0}", possibleFreshIngredientCount);
     }
 
     public static Collection<Range> readRanges(List<String> lines) {
@@ -39,6 +41,19 @@ public class AoCLvl05 {
         return ingredients.stream()
                           .filter(i -> anyRangeContains(ranges, i))
                           .count();
+    }
+
+    public static long countFreshIngredients(Collection<Range> ranges) {
+        var reducedRanges = reduceRanges(ranges);
+
+        return reducedRanges.stream()
+                            .mapToLong(Range::elementCount)
+                            .sum();
+    }
+
+    private static Collection<Range> reduceRanges(Collection<Range> ranges) {
+        return ranges.stream()
+                     .gather(new RangeReducingGatherer()).toList();
     }
 
     private static boolean anyRangeContains(Collection<Range> ranges, Long ingredient) {
