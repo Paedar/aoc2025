@@ -18,7 +18,7 @@ public class AoCLvl04 {
 
     public static final int MAX_SURROUNDING_PAPER_STACKS = 3;
 
-    public static void main(String[] args) {
+    static void main() {
         var lines = InputReader.readLines("04.input.txt");
 
         var grid = GridInfo.of(lines);

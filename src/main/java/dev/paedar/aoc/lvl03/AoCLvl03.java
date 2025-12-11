@@ -11,7 +11,7 @@ public class AoCLvl03 {
 
     private static final Logger LOGGER = Logger.getLogger(AoCLvl03.class.getName());
 
-    public static void main(String[] args) {
+    static void main() {
         var banks = InputReader.readLines("03.input.txt");
 
         var sumOfIdealJoltages = sumOfIdealJoltages(banks, 2);

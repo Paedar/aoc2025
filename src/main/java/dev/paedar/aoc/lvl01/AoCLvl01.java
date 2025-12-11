@@ -11,7 +11,7 @@ public class AoCLvl01 {
 
     private static final Logger LOGGER = Logger.getLogger(AoCLvl01.class.getName());
 
-    public static void main(String[] args) {
+    static void main() {
         var lines = InputReader.readLines("01.input.txt");
 
         var instructions = lines.stream()

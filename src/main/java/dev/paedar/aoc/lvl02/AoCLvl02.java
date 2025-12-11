@@ -13,7 +13,7 @@ public class AoCLvl02 {
 
     private static final Logger LOGGER = Logger.getLogger(AoCLvl02.class.getName());
 
-    public static void main(String[] args) {
+    static void main() {
         var ids = InputReader.readTokens("02.input.txt");
 
         var sumOfInvalidIds = sumInvalidIdsFromRanges(ids, AoCLvl02::isNotTwiceRepeatedNumber);
