@@ -12,7 +12,11 @@ public class Util {
     }
 
     public static List<String> splitToTokens(String content) {
-        return Arrays.asList(content.split("\\W+"));
+        return split(content, "\\W+");
+    }
+
+    public static List<String> split(String content, String regex) {
+        return Arrays.asList(content.split(regex));
     }
 
     public static <T> Stream<List<T>> permute(List<T> permuteWith, int times) {
