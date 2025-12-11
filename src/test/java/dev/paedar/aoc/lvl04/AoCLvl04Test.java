@@ -3,10 +3,11 @@ package dev.paedar.aoc.lvl04;
 import dev.paedar.aoc.util.GridInfo;
 import dev.paedar.aoc.util.InputReader;
 import dev.paedar.aoc.util.Position;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AoCLvl04Test {
 
@@ -25,4 +26,27 @@ class AoCLvl04Test {
 
         assertEquals(13, AoCLvl04.countAccessibleStacks(grid));
     }
+
+    @Test
+    void testRemoveAccessibleStacks() {
+        var grid = GridInfo.of(InputReader.readLines("04.example.txt"));
+
+        assertEquals(13, AoCLvl04.countAccessibleStacks(grid));
+
+        var removedCount = AoCLvl04.removeAccessibleStacks(grid);
+        assertEquals(13, removedCount);
+        assertEquals(12, AoCLvl04.countAccessibleStacks(grid));
+    }
+
+    @Test
+    void testRemoveAccessibleStacksUntilCleared() {
+        var grid = GridInfo.of(InputReader.readLines("04.example.txt"));
+
+        assertEquals(13, AoCLvl04.countAccessibleStacks(grid));
+
+        var removedCount = AoCLvl04.removeAccessibleStackUntilAllInaccessible(grid);
+        assertEquals(43, removedCount);
+        assertEquals(0, AoCLvl04.countAccessibleStacks(grid));
+    }
+
 }
