@@ -15,7 +15,7 @@ public record GridInfo(List<String> lines, int height, int width) {
                          .mapToInt(String::length)
                          .max()
                          .orElse(0);
-        return new GridInfo(lines, height, width);
+        return new GridInfo(new ArrayList<>(lines), height, width);
     }
 
     public GridInfo(int height, int width) {
@@ -57,4 +57,5 @@ public record GridInfo(List<String> lines, int height, int width) {
         sb.setCharAt(p.x(), c);
         lines.set(p.y(), sb.toString());
     }
+
 }
