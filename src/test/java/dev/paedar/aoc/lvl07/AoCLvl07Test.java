@@ -47,4 +47,14 @@ class AoCLvl07Test {
         assertEquals(21, AoCLvl07.countBeamsSplit(propagatedGrid));
     }
 
+    @Test
+    void timelineCount() {
+        var lines = InputReader.readLines("07.example.txt");
+        var originalGrid = GridInfo.of(lines);
+
+        var propagatedGrid = AoCLvl07.propagateTachyonBeams(originalGrid);
+
+        assertEquals(40, AoCLvl07.timelineCount(propagatedGrid));
+    }
+
 }
