@@ -16,4 +16,14 @@ class AoCLvl08Test {
         assertEquals(40L, biggest3CircuitSizeProduct);
     }
 
+    @Test
+    void testWallDistanceProductAfterMergingAllCircuits() {
+
+        var tokens = InputReader.readTokens("08.example.txt");
+
+        var wallDistance = AoCLvl08.wallDistanceProductAfterMergingAllCircuits(tokens);
+
+        assertEquals(25272, wallDistance);
+    }
+
 }
