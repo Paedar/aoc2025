@@ -2,6 +2,8 @@ package dev.paedar.aoc.lvl08;
 
 import dev.paedar.aoc.util.InputReader;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -27,18 +29,16 @@ public class AoCLvl08 {
         var junctionBoxes = toPoints(tokens);
         var circuitRegistration = junctionBoxes.stream()
                                                .collect(Collectors.toMap(Function.identity(), Point3D::hashCode));
-        var distancePrecalculation = junctionBoxes.stream()
-                                                  .flatMap(jb1 -> junctionBoxes.stream()
-                                                                               .map(jb2 -> new Pair(jb1, jb2))
-                                                  )
-                                                  .filter(pair -> !pair.first().equals(pair.second()))
-                                                  .collect(Collectors.toMap(Function.identity(), Pair::distanceSquared));
+        var distancePrecalculation = getPairCrossProduct(junctionBoxes)
+                                             .stream()
+                                             .filter(pair -> !pair.first().equals(pair.second()))
+                                             .map(p -> new PrecalculatedDistance(p, p.distanceSquared()))
+                                             .sorted(Comparator.comparingLong(PrecalculatedDistance::distanceSquared))
+                                             .collect(Collectors.toList()); // Do not replace with Stream.toList(), modifiability is desired here
 
         for (int i = 0; i < numConnections; ++i) {
-            var shortestDistancePair = distancePrecalculation.keySet()
-                                                             .stream()
-                                                             .min(Comparator.comparingLong(Pair::distanceSquared))
-                                                             .orElseThrow(() -> new IllegalStateException("No more pairs remaining"));
+            var precalculated = distancePrecalculation.removeFirst();
+            var shortestDistancePair = precalculated.pair();
 
             var circuitNumberFirst = circuitRegistration.get(shortestDistancePair.first());
             var circuitNumberSecond = circuitRegistration.get(shortestDistancePair.second());
@@ -51,10 +51,6 @@ public class AoCLvl08 {
                                                                             .toList();
                 affectedSecondCircuitJunctionBoxes.forEach(affectedJunctionBox -> circuitRegistration.put(affectedJunctionBox, circuitNumberFirst));
             }
-
-            // Remove both boxes from pool of unconnected distance precalculation
-            distancePrecalculation.remove(shortestDistancePair);
-            distancePrecalculation.remove(shortestDistancePair.reverse());
         }
 
         // Calculate size of the circuits:
@@ -67,24 +63,23 @@ public class AoCLvl08 {
                            .reduce(1L, (aLong, aLong2) -> aLong * aLong2);
     }
 
+    private static Collection<Point3DPair> getPairCrossProduct(List<Point3D> junctionBoxes) {
+        var numJunctionBoxes = junctionBoxes.size();
+        var result = new ArrayList<Point3DPair>(numJunctionBoxes * numJunctionBoxes); // upper bound
+        for (int i = 0; i < numJunctionBoxes; ++i) {
+            for (int j = i; j < numJunctionBoxes; ++j) {
+                result.add(new Point3DPair(junctionBoxes.get(i), junctionBoxes.get(j)));
+            }
+        }
+        return result;
+    }
+
     private static List<Point3D> toPoints(List<String> tokens) {
         return tokens.stream()
                      .map(Long::parseLong)
                      .gather(Gatherers.windowFixed(3))
                      .map(Point3D::ofCoordinates)
                      .toList();
-    }
-
-    private static record Pair(Point3D first, Point3D second) {
-
-        long distanceSquared() {
-            return first.distanceSquared(second);
-        }
-
-        Pair reverse() {
-            return new Pair(second, first);
-        }
-
     }
 
 }
