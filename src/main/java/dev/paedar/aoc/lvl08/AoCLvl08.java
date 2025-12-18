@@ -1,8 +1,8 @@
 package dev.paedar.aoc.lvl08;
 
 import dev.paedar.aoc.util.InputReader;
+import dev.paedar.aoc.util.gatherers.CrossProductGatherer;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Gatherers;
+import java.util.stream.Stream;
 
 public class AoCLvl08 {
 
@@ -83,7 +84,6 @@ public class AoCLvl08 {
 
     private static List<PrecalculatedDistance> getPrecalculatedDistances(List<Point3D> junctionBoxes) {
         return getPairCrossProduct(junctionBoxes)
-                       .stream()
                        .filter(pair -> !pair.first().equals(pair.second()))
                        .map(p -> new PrecalculatedDistance(p, p.distanceSquared()))
                        .sorted(Comparator.comparingLong(PrecalculatedDistance::distanceSquared))
@@ -103,15 +103,10 @@ public class AoCLvl08 {
         return false;
     }
 
-    private static Collection<Point3DPair> getPairCrossProduct(List<Point3D> junctionBoxes) {
-        var numJunctionBoxes = junctionBoxes.size();
-        var result = new ArrayList<Point3DPair>(numJunctionBoxes * numJunctionBoxes); // upper bound
-        for (int i = 0; i < numJunctionBoxes; ++i) {
-            for (int j = i; j < numJunctionBoxes; ++j) {
-                result.add(new Point3DPair(junctionBoxes.get(i), junctionBoxes.get(j)));
-            }
-        }
-        return result;
+    private static Stream<Point3DPair> getPairCrossProduct(List<Point3D> junctionBoxes) {
+        return junctionBoxes.stream()
+                            .gather(CrossProductGatherer.noInverseProductNoSelfCrossing())
+                            .map(l -> new Point3DPair(l.getFirst(), l.getLast()));
     }
 
     private static List<Point3D> toPoints(List<String> tokens) {
