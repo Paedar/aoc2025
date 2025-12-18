@@ -84,7 +84,6 @@ public class AoCLvl08 {
 
     private static List<PrecalculatedDistance> getPrecalculatedDistances(List<Point3D> junctionBoxes) {
         return getPairCrossProduct(junctionBoxes)
-                       .filter(pair -> !pair.first().equals(pair.second()))
                        .map(p -> new PrecalculatedDistance(p, p.distanceSquared()))
                        .sorted(Comparator.comparingLong(PrecalculatedDistance::distanceSquared))
                        .collect(Collectors.toList()); // Do not replace with Stream.toList(), modifiability is desired here
